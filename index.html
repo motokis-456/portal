@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Knowledge Base</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px 15px;
+    }
+    h1 {
+      font-size: 20px;
+      color: #111;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .card-link {
+      display: block;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-left: 5px solid #333;
+      border-radius: 8px;
+      padding: 15px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.1s ease;
+    }
+    .card-link:active {
+      transform: scale(0.98);
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+      color: #111;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #666;
+    }
+    /* カテゴリ別アクセントカラー */
+    .border-study { border-left-color: #ff6b6b; }
+    .border-fitness { border-left-color: #4cae4c; }
+    .border-finance { border-left-color: #f0ad4e; }
+    .border-legal { border-left-color: #0275d8; }
+  </style>
+</head>
+<body>
+
+  <h1>ナレッジ＆サポート ポータル</h1>
+
+  <div class="menu-grid">
+    <a href="./study/" class="card-link border-study">
+      <div class="card-title">1. おべんきょうサポート</div>
+      <div class="card-desc">ひらがなランダム12文字・読み上げ機能など</div>
+    </a>
+
+    <a href="./fitness/" class="card-link border-fitness">
+      <div class="card-title">2. 筋肉・ボディメイク知識</div>
+      <div class="card-desc">トレーニングメカニズム、食事管理、栄養計算</div>
+    </a>
+
+    <a href="./finance/" class="card-link border-finance">
+      <div class="card-title">3. 金融・マネーリテラシー</div>
+      <div class="card-desc">NISA、見積もり注意点、契約トラブル防衛</div>
+    </a>
+
+    <a href="./legal/" class="card-link border-legal">
+      <div class="card-title">4. 法的知識・トラブル回避</div>
+      <div class="card-desc">公道・私道の法的基準、近隣トラブル予防知識</div>
+    </a>
+  </div>
+
+</body>
+</html>
