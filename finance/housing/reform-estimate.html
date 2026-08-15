@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リフォーム見積評価ガイド｜AI評価基準</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f4f6f8;color:#18202a;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Sans",Meiryo,sans-serif;line-height:1.75}
+.container{max-width:1050px;margin:auto;padding:18px}
+.hero{background:#18202a;color:#fff;border-radius:16px;padding:26px 22px;margin-bottom:16px}
+.hero h1{font-size:1.55rem;margin:0 0 8px}
+.hero p{margin:0;color:#d7dee7;font-size:.9rem}
+.notice{background:#fff7d6;border-left:5px solid #d59b00;padding:16px 18px;border-radius:10px;margin:16px 0}
+.step{background:#eaf3ff;border:1px solid #b9d7fa;border-radius:14px;padding:18px;margin-bottom:20px}
+.step h2{font-size:1.12rem;margin:0 0 12px}
+.steps{display:grid;gap:9px}
+.stepitem{background:#fff;border-radius:10px;padding:11px 13px}
+.stepitem b{display:inline-block;width:62px}
+section{background:#fff;border-radius:14px;padding:22px;margin:16px 0;box-shadow:0 2px 9px rgba(0,0,0,.05)}
+h2{font-size:1.22rem;margin:0 0 14px;border-bottom:2px solid #e9edf2;padding-bottom:8px}
+.toc{background:#fff;border-radius:14px;padding:18px;margin:16px 0;box-shadow:0 2px 9px rgba(0,0,0,.05);position:sticky;top:8px;z-index:10}
+.toc h2{font-size:1.05rem;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.toc a{display:block;background:#f5f7fa;border:1px solid #e2e7ec;border-radius:9px;padding:8px 10px;color:#18202a;text-decoration:none;font-size:.84rem}
+.toc a:hover{background:#eaf3ff;border-color:#b9d7fa}
+.toc .sub{font-size:.76rem;color:#66717d;display:block}
+.toplink{font-size:.75rem;float:right;color:#53606d;text-decoration:none}
+.topbtn{position:fixed;right:14px;bottom:14px;z-index:20;background:#18202a;color:#fff;text-decoration:none;border-radius:999px;padding:8px 12px;font-size:.76rem;box-shadow:0 3px 12px rgba(0,0,0,.2)}
+.workflow-shortcut{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#eaf3ff;border:1px solid #b9d7fa;border-radius:14px;padding:14px 16px;margin:16px 0}
+.workflow-shortcut strong{display:block;font-size:.94rem}
+.workflow-shortcut span{display:block;color:#53606d;font-size:.78rem;margin-top:2px}
+.workflow-shortcut a{flex:0 0 auto;background:#18202a;color:#fff;text-decoration:none;border-radius:9px;padding:8px 12px;font-size:.8rem;font-weight:700}
+.workflow-shortcut a:hover{opacity:.85}
+.detail-table{font-size:.82rem}
+.detail-table th:first-child{width:24%}
+.callout{background:#eef7f1;border-left:4px solid #3d8b61;padding:12px 14px;border-radius:8px;margin:10px 0}
+.danger-callout{background:#fff3ec;border-left:4px solid #c46b32;padding:12px 14px;border-radius:8px;margin:10px 0}
+h3{font-size:1rem;margin:20px 0 8px}
+h4{font-size:.92rem;margin:14px 0 5px}
+.badge{display:inline-block;font-size:.74rem;border-radius:999px;padding:3px 9px;margin-right:5px;font-weight:700}
+.user{background:#e8f5ee;color:#17643d}
+.ai{background:#eeeafd;color:#4d3e91}
+.warn{background:#fff0e8;color:#9a4b13}
+ul,ol{padding-left:22px}
+li{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:10px 0}
+th,td{border-bottom:1px solid #e7ebef;padding:9px 8px;text-align:left;vertical-align:top}
+th{background:#f7f9fb}
+code,.prompt{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.prompt{background:#111827;color:#e5e7eb;border-radius:10px;padding:15px;white-space:pre-wrap;font-size:.78rem;overflow:auto}
+.example{background:#f7f9fb;border-radius:10px;padding:13px;margin:10px 0}
+.rule{border-left:4px solid #6b7280;padding:8px 12px;background:#f8fafc;margin:10px 0}
+.anchor{scroll-margin-top:12px}
+.small{font-size:.82rem;color:#66717d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#f7f9fb;border-radius:10px;padding:14px}
+.check{background:#fbfcfd;border:1px solid #e5e9ee;border-radius:10px;padding:13px;margin:8px 0}
+.footer{font-size:.78rem;color:#68737f;text-align:center;padding:20px}
+@media(max-width:700px){.container{padding:10px}.hero,section{padding:17px}.grid{grid-template-columns:1fr}.toc{position:relative;top:0}.toc-grid{grid-template-columns:1fr}.workflow-shortcut{align-items:flex-start;flex-direction:column}.workflow-shortcut a{width:100%;text-align:center}table{font-size:.78rem}th,td{padding:7px 5px}}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="topbtn" href="#toc" aria-label="目次へ戻る">↑ 目次へ</a>
+
+<header class="hero">
+<h1>リフォーム見積評価ガイド</h1>
+<p>見積書を「価格だけ」で判断せず、必要性・数量・仕様・材料価格・施工・付帯工事・管理費・値引き・契約・長期コストまで構造的に確認するための、単一HTMLリファレンス。</p>
+</header>
+
+<div class="notice">
+<strong>最重要ルール：</strong>このページは固定された「相場表」ではありません。価格・製品・施工条件は変動するため、実際の見積評価では必要な最新情報をWebで確認し、判断できない情報は推測せずユーザーに確認してください。
+</div>
+
+
+<div class="workflow-shortcut">
+  <div>
+    <strong>実際に見積もりを評価するときはこちら</strong>
+    <span>このHTMLを「読む」のではなく、実際の見積書をAIに評価させる場合の手順です。</span>
+  </div>
+  <a href="#workflow">評価フローを見る →</a>
+</div>
+
+<section class="step anchor" id="steps">
+<h2>最初に必ず実行する：AI評価 Step 1～6</h2>
+<div class="steps">
+<div class="stepitem"><b>Step 1</b> <strong>このHTML全体の評価基準を読む。</strong> ①～⑩、値引き、業者への質問、最終評価ルールまでを評価基準として扱う。</div>
+<div class="stepitem"><b>Step 2</b> <strong>実際の見積書を読む。</strong> 項目・数量・単位・型番・単価・一式・工事範囲・条件を抽出する。</div>
+<div class="stepitem"><b>Step 3</b> <strong>不足情報と判断不能項目を洗い出す。</strong> 型番・数量根拠・仕様・施工条件などが欠けている場合、推測で補完しない。</div>
+<div class="stepitem"><b>Step 4</b> <strong>ユーザーに対話形式で確認する。</strong> 判断結果を左右する情報から優先して質問する。質問は必要最小限にする。</div>
+<div class="stepitem"><b>Step 5</b> <strong>必要に応じて最新のWeb情報を調査する。</strong> メーカー仕様、現行製品、販売価格、施工相場、保証等を確認し、情報源と調査時点を明示する。</div>
+<div class="stepitem"><b>Step 6</b> <strong>最終評価・交渉ポイント・業者への確認事項を提示する。</strong> 「妥当／交渉推奨／再見積推奨／要確認／強い注意」等に整理し、根拠を項目別に示す。</div>
+</div>
+</section>
+
+<nav class="toc" id="toc" aria-label="ページ目次">
+<h2>目次 <span class="small">｜クリックで該当箇所へ移動</span></h2>
+<div class="toc-grid">
+<a href="#principles">基本原則<span class="sub">このガイドの使い方・判断思想</span></a>
+<a href="#need">① 必要性<span class="sub">本当に必要な工事か</span></a>
+<a href="#quantity">② 数量<span class="sub">数量・面積・ロス</span></a>
+<a href="#spec">③ 仕様<span class="sub">必要十分なグレードか</span></a>
+<a href="#material">④ 材料価格<span class="sub">定価・市場価格・見積価格</span></a>
+<a href="#labor">⑤ 施工価格<span class="sub">人工・難易度・特殊作業</span></a>
+<a href="#ancillary">⑥ 付帯工事<span class="sub">足場・撤去・処分など</span></a>
+<a href="#overhead">⑦ 管理・諸経費<span class="sub">率ではなく内容・実額</span></a>
+<a href="#discount">⑧ 利益・値引き<span class="sub">値引率・交渉余地</span></a>
+<a href="#contract">⑨ 契約条件<span class="sub">追加費用・保証・支払</span></a>
+<a href="#longterm">⑩ 長期コスト<span class="sub">維持・修理・交換</span></a>
+<a href="#types">リフォーム別チェック<span class="sub">外壁・屋根・設備など</span></a>
+<a href="#comparison">相見積もり<span class="sub">同条件比較の原則</span></a>
+<a href="#web">AIのWeb調査<span class="sub">最新価格・仕様の調べ方</span></a>
+<a href="#questions">AIの質問優先順位<span class="sub">何を先に聞くか</span></a>
+<a href="#output">AI最終評価フォーマット<span class="sub">最終回答の型</span></a>
+<a href="#templates">業者への質問例<span class="sub">そのまま使える質問</span></a>
+<a href="#workflow">実際の評価フロー<span class="sub">Step 1～6の実運用</span></a>
+<a href="#failure">失敗防止ルール<span class="sub">やってはいけない判断</span></a>
+</div>
+</nav>
+
+<section class="anchor" id="principles">
+<h2>このガイドの基本原則</h2>
+<ul>
+<li><strong>「高い」と「交渉できる」は別。</strong> 高価格でも合理的な理由があればあり得る。逆に、合理的な説明がなく市場価格との差が大きければ交渉優先度が上がる。</li>
+<li><strong>メーカー希望小売価格だけを基準にしない。</strong> 定価、実際の市場価格、業者見積価格を分けて比較する。</li>
+<li><strong>値引率だけで業者を評価しない。</strong> 定価を高く設定して大きく値引いて見せることもできる。</li>
+<li><strong>仕様・数量・価格をセットで見る。</strong> 安い商品でも過剰数量なら高くなり、必要以上に高性能な商品なら総額が膨らむ。</li>
+<li><strong>「一式」は内訳を確認する。</strong> 判断できない項目を無理に単価評価しない。</li>
+<li><strong>諸経費率だけで高い・安いを決めない。</strong> 工事規模、実額、内容、現場管理量、元請構造、他社比較を見る。</li>
+<li><strong>不明な数字は推測しない。</strong> 「分からない」こと自体を評価結果として残し、確認事項にする。</li>
+<li><strong>相見積もりは同条件比較が原則。</strong> 商品、仕様、数量、工事時間帯、保証、工事範囲が違えば単純比較しない。</li>
+</ul>
+</section>
+
+<!-- 1 -->
+<section class="anchor" id="need">
+<h2>① 必要性</h2>
+<h3>何を見るか</h3>
+<p>そもそも、その工事・交換・追加工事が本当に必要なのかを確認する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>故障・劣化・安全性など、工事が必要となる根拠</li>
+<li>部分修理・補修・再調整で済まないか</li>
+<li>今すぐ必要か、1～3年待てるか</li>
+<li>業者が提示した「必要」の根拠が客観的か</li>
+<li>複数の選択肢を提示しているか</li>
+</ul>
+<div class="example"><strong>一般例：</strong>給湯器から異音がするという理由だけで全面交換を勧められた場合、故障箇所の診断、部品交換の可否、修理費と交換費の比較を確認する。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<div class="check">「なぜ必要なのか」「修理・部分交換では駄目なのか」「今やる必要があるのか」を確認する。</div>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>必要性の根拠が見積書にない場合、必要性を断定しない。</li>
+<li>代替案が存在し得る場合、「修理／部分補修／交換／全面更新」の比較を質問する。</li>
+<li>緊急性が明示されていない場合、緊急性を推測しない。</li>
+</ul>
+</section>
+
+<!-- 2 -->
+<section class="anchor" id="quantity">
+<h2>② 数量</h2>
+<h3>何を見るか</h3>
+<p>見積数量が実際の施工対象・必要数量と一致しているかを確認する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>数量、単位、面積、長さ、台数、個数</li>
+<li>数量の算出根拠</li>
+<li>ロス・予備・歩留まりの扱い</li>
+<li>既存品を撤去する数量と新設する数量が一致しているか</li>
+<li>「一式」に数量が隠れていないか</li>
+</ul>
+<div class="example"><strong>一般例：</strong>床材80㎡の工事で材料90㎡が計上されている場合、施工ロスとして妥当なのか、余剰分なのか、メーカーの必要量計算なのかを確認する。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<p>「なぜこの数量なのか」を説明できる資料・計算根拠があるかを見る。</p>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>実測値と発注数量を混同しない。</li>
+<li>ロス率は工事・材料ごとに異なるため固定値で断定しない。必要ならメーカー施工資料等を調査する。</li>
+<li>数量差が大きい場合、算出式と根拠を質問する。</li>
+</ul>
+</section>
+
+<!-- 3 -->
+<section class="anchor" id="spec">
+<h2>③ 仕様</h2>
+<h3>何を見るか</h3>
+<p>見積の商品・工法・性能が「必要十分」なのか、過剰仕様なのかを確認する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>メーカー、商品名、型番、シリーズ、グレード</li>
+<li>性能、容量、明るさ、厚み、材質、耐候性など目的に応じた仕様</li>
+<li>標準仕様と上位仕様の差</li>
+<li>業者がその仕様を選んだ理由</li>
+<li>代替可能な商品・工法</li>
+</ul>
+<div class="example"><strong>一般例：</strong>家庭用エアコンで、部屋の条件に対して必要能力より大きい容量の商品が選ばれている場合、容量選定の根拠と標準容量との差額を確認する。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<p>「高性能＝良い」と考えず、必要性能を満たす最低限～合理的なグレードを比較する。</p>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>型番がない場合、商品価格や性能を正確に評価しない。</li>
+<li>過剰仕様の可能性がある場合、必要性能の根拠を質問する。</li>
+<li>代替商品を提示する場合、性能・保証・施工条件が同等か確認する。</li>
+</ul>
+</section>
+
+<!-- 4 -->
+<section class="anchor" id="material">
+<h2>④ 材料価格</h2>
+<h3>何を見るか</h3>
+<p>材料・設備の販売価格が妥当かを、メーカー定価だけでなく市場実勢価格と比較する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>メーカー希望小売価格</li>
+<li>業者見積価格</li>
+<li>現在の販売価格・市場実勢価格</li>
+<li>数量を掛けた総額</li>
+<li>同等品・代替品の価格</li>
+<li>仕入れ・販売価格の差を説明できる合理的理由</li>
+</ul>
+<div class="example"><strong>一般例：</strong>メーカー定価20万円の商品が複数の一般販売店で10～12万円程度で販売されているのに、見積が18万円なら、「定価から10%引き」という表示だけで良し悪しを判断せず、価格設定の理由を確認する。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<div class="rule">比較する順番は<strong>メーカー定価 → 市場実勢価格 → 業者見積価格</strong>。定価からの値引率だけでは判断しない。</div>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>最新価格が必要な場合はWeb調査を行う。</li>
+<li>市場価格との差額を、そのまま「業者利益」「搾取」と断定しない。</li>
+<li>価格差が大きい場合、保証・特殊仕入れ・搬入・保守・仕様差など合理的理由の有無を確認する。</li>
+<li>価格情報は調査日、販売条件、送料・工事費込み/別を区別する。</li>
+</ul>
+</section>
+
+<!-- 5 -->
+<section class="anchor" id="labor">
+<h2>⑤ 施工価格</h2>
+<h3>何を見るか</h3>
+<p>施工価格は「難しい／簡単」という感覚ではなく、<strong>必要な人員・資格・機材・安全対策・作業時間・施工条件</strong>に分解して見る。</p>
+
+<h3>「施工難易度」を具体的に分解する</h3>
+<table class="detail-table">
+<tr><th>難易度を上げる要因</th><th>具体例</th><th>見積で確認すること</th></tr>
+<tr>
+<td><strong>高所・足場</strong></td>
+<td>2階外壁の塗装、屋根工事、2階軒下の設備交換。足場を組む必要がある、または高所作業の安全対策が必要。</td>
+<td>足場費が別計上か、足場上で行う作業が何か、作業員数・日数は妥当か。</td>
+</tr>
+<tr>
+<td><strong>高所作業車・特殊機材</strong></td>
+<td>一般的な戸建て住宅では常に必要なわけではないが、足場を組めない・道路側からしか作業できない・高所の設備を一時的に施工する場合などで使用することがある。</td>
+<td>本当に必要なのか、足場との比較、使用日数、搬入・回送費が含まれるか。</td>
+</tr>
+<tr>
+<td><strong>電気工事の資格・専門性</strong></td>
+<td>住宅のコンセント増設、配線変更、分電盤工事、照明回路の新設など、電気工事士等の資格が関係する作業。</td>
+<td>資格が必要な作業なのか、有資格者が施工するのか、電気工事費に何が含まれるか。</td>
+</tr>
+<tr>
+<td><strong>給排水・ガス等の専門作業</strong></td>
+<td>給湯設備の配管変更、浴室・キッチンの給排水変更、ガス設備を伴う工事など。</td>
+<td>既存配管の状態、接続方法、資格・有資格業者の関与、試験・検査の有無。</td>
+</tr>
+<tr>
+<td><strong>既存状態が悪い</strong></td>
+<td>腐食した配管、劣化した下地、歪んだ壁、固着した部材、既存設備の撤去が困難なケース。</td>
+<td>追加補修が発生する可能性、追加単価、想定範囲。</td>
+</tr>
+<tr>
+<td><strong>狭所・搬入困難</strong></td>
+<td>機器を階段から搬入する、狭い道路から大型設備を搬入する、室内を通して長い部材を運ぶなど。</td>
+<td>搬入人数、養生、特殊搬入、クレーン等の必要性。</td>
+</tr>
+<tr>
+<td><strong>施工精度・専門技能</strong></td>
+<td>防水、屋根、タイル、特殊な下地処理など、仕上がりが性能に直結する作業。</td>
+<td>施工工程、資格・技能、使用材料、検査、保証。</td>
+</tr>
+<tr>
+<td><strong>時間・周辺環境</strong></td>
+<td>夜間・休日、近隣への騒音配慮、道路使用、交通誘導が必要な工事。</td>
+<td>割増の理由、警備員・誘導員、道路使用等の費用。</td>
+</tr>
+</table>
+
+<h3>高所作業車は「戸建てだから不要」ではない</h3>
+<div class="callout">
+<strong>判断ポイント：</strong>一般的な戸建て住宅では足場の方が現実的なケースが多い一方、現場条件によって高所作業車が合理的な場合もある。重要なのは「戸建てかどうか」ではなく、<strong>作業高さ・作業位置・道路条件・足場設置可否・作業時間・安全性</strong>。
+</div>
+<div class="example"><strong>一般例：</strong>道路に面した2階の外壁に一時的な設備を取り付ける工事で、全面足場を組むより高所作業車を短時間使用した方が合理的な場合がある。逆に、外壁全面を数日かけて施工するなら、足場との費用比較が必要になる。</div>
+
+<h3>「資格が必要」＝施工費が高くて当然、ではない</h3>
+<div class="danger-callout">
+資格や専門技術が必要であることは、施工費が発生する理由にはなり得るが、<strong>見積金額が自動的に妥当になるわけではない。</strong>「何の資格・技能が必要で、何人が何時間作業するのか」まで確認する。
+</div>
+<div class="example"><strong>一般例：</strong>照明器具の交換で、既存配線を触らず単純な器具交換なのか、回路を新設して分電盤から配線するのかでは、必要な作業内容が大きく異なる。見積の「電気工事一式」だけでは比較しない。</div>
+
+<h3>施工価格のチェック式</h3>
+<div class="rule"><strong>施工価格 ≒ 人員 × 作業時間 × 作業単価 ＋ 特殊機材 ＋ 安全対策 ＋ 搬入・交通等 ＋ その他特殊条件</strong><br>
+これは厳密な原価計算式ではなく、見積を分解して考えるためのチェックフレーム。</div>
+
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<ul>
+<li>「難しいから高い」ではなく、<strong>何が難しいのか</strong>を具体的に聞く。</li>
+<li>特殊機材・足場・有資格者・専門技能・追加人員のどれが必要なのか確認する。</li>
+<li>特殊機材が必要なら「本当に必要か」「別工法の方が安くならないか」を確認する。</li>
+<li>電気・ガス・給排水など資格や専門性が関係する工事は、作業内容と資格者の関与を確認する。</li>
+<li>足場や高所作業車など、付帯工事と施工費の境界も確認する。</li>
+</ul>
+
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>「難易度が高い」という記述だけでは高額施工費の根拠として扱わない。</li>
+<li>高額な施工費を見つけたら、<strong>人員・時間・資格・機材・安全対策・搬入・既存状態</strong>に分解する。</li>
+<li>資格要件は工事内容によって異なるため、具体的な法令・資格要件を必要に応じて最新情報で確認する。</li>
+<li>高所作業車が計上されている場合、作業高さだけで必要と判断せず、足場・高所作業車・その他工法の比較を行う。</li>
+<li>足場がある場合、その足場を利用して複数工事をまとめられないか確認する。工事を別々に行うことで足場費が二重になる可能性を確認する。</li>
+<li>「資格が必要だから高い」と結論づけず、資格者の作業範囲・人数・時間・施工内容を確認する。</li>
+<li>相場を調べる場合は、同等の施工条件で比較する。一般的な単価だけを当てはめない。</li>
+</ul>
+</section>
+
+<!-- 6 -->
+<section class="anchor" id="ancillary">
+<h2>⑥ 付帯工事</h2>
+<h3>何を見るか</h3>
+<p>本体価格以外に必要な工事・費用が適切に含まれているか、二重計上や抜けがないかを確認する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>撤去・解体</li>
+<li>廃材処分</li>
+<li>足場・高所作業</li>
+<li>養生</li>
+<li>運搬・搬入</li>
+<li>下地補修</li>
+<li>電気・給排水・ガス等の付帯工事</li>
+<li>既存設備の脱着・復旧</li>
+</ul>
+<div class="example"><strong>一般例：</strong>キッチン交換で、本体価格だけ比較すると安く見える業者でも、既存撤去・処分・給排水・電気・壁補修が別途なら、最終総額は大きく変わる。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<p>「含まれているもの」と「別途になるもの」を確認し、最終支払額で比較する。</p>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>見積Aに含まれ、見積Bにない項目を「Bが安い」と扱わない。含有範囲を揃える。</li>
+<li>同一作業が複数項目に計上されている可能性があれば二重計上を確認する。</li>
+<li>追加工事条件も必ず確認する。</li>
+</ul>
+</section>
+
+<!-- 7 -->
+<section class="anchor" id="overhead">
+<h2>⑦ 管理・諸経費</h2>
+<h3>何を見るか</h3>
+<p>現場を管理する費用と会社側の一般管理・営業等の費用を、率だけでなく実額と内容で評価する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>現場管理費</li>
+<li>工程・安全・品質管理</li>
+<li>一般管理費・営業経費</li>
+<li>諸経費の実額</li>
+<li>工事費に対する率</li>
+<li>小規模／大規模による固定費負担の違い</li>
+<li>元請・下請・再委託の構造</li>
+<li>同一業者内で項目が重複していないか</li>
+</ul>
+<div class="example"><strong>一般例：</strong>20万円の小規模修理と500万円の全面改修で、同じ10%という率でも金額と管理業務の意味は大きく異なる。率だけで判断しない。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<table>
+<tr><th>確認</th><th>考え方</th></tr>
+<tr><td>率</td><td>高い/低いの入口。これだけでは判定しない。</td></tr>
+<tr><td>実額</td><td>実際に何円払うのかを見る。</td></tr>
+<tr><td>内容</td><td>何の業務に対する費用なのか確認する。</td></tr>
+<tr><td>規模</td><td>小規模工事ほど固定的な管理負担が率を押し上げる場合がある。</td></tr>
+<tr><td>重複</td><td>「現場管理費」「業者諸経費」等の役割が重複していないか確認する。</td></tr>
+</table>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>諸経費率だけで「高い」と判定しない。</li>
+<li>工事規模、実額、内訳、現場管理量、元請構造、相見積もりを合わせて評価する。</li>
+<li>小規模工事では率が高くても固定費の影響を検討する。</li>
+<li>大規模工事では率だけでなく、実額と内容が合理的か確認する。</li>
+<li>同一費用の二重計上が疑われる場合は、項目ごとの定義を質問する。</li>
+</ul>
+</section>
+
+<!-- 8 -->
+<section class="anchor" id="discount">
+<h2>⑧ 利益・値引き・交渉余地</h2>
+<h3>何を見るか</h3>
+<p>「何％値引きされたか」ではなく、必要な仕様を満たしたうえで、業者価格に合理的な交渉余地があるかを判断する。</p>
+
+<h3>値引きを見る順番</h3>
+<div class="grid">
+<div class="card"><strong>1. 必要性</strong><br>そもそも必要な工事・商品か。</div>
+<div class="card"><strong>2. 仕様</strong><br>必要十分なグレードか。</div>
+<div class="card"><strong>3. 数量</strong><br>必要数量か。過剰計上がないか。</div>
+<div class="card"><strong>4. 市場価格</strong><br>現在の販売価格と比較する。</div>
+<div class="card"><strong>5. 見積価格</strong><br>業者はいくらで販売しているか。</div>
+<div class="card"><strong>6. 交渉余地</strong><br>価格差を説明できる理由があるか。</div>
+</div>
+
+<h3>値引率の考え方</h3>
+<p>「定価から50%引きだから優良」「20%引きだから高い」というルールは使わない。メーカー定価自体が実際の市場価格と一致するとは限らず、業者の仕入条件も外からは分からないため。</p>
+
+<div class="example"><strong>一般例：</strong>メーカー定価30万円の商品が一般販売店で15～18万円で販売され、業者見積が27万円だった場合、「10%値引き」という表示よりも市場価格との差を見る。その差について、保証・特殊施工・搬入・保守等の合理的理由があるか確認する。</div>
+
+<h3>「もっと頑張れない？」と交渉できるケース</h3>
+<ul>
+<li>市場実勢価格との差が明確に大きい。</li>
+<li>同一仕様・同一条件の相見積もりより高い。</li>
+<li>過剰仕様を標準として提案している。</li>
+<li>数量の根拠が弱い。</li>
+<li>一式価格で価格根拠が不透明。</li>
+<li>値引き後価格が市場価格と比べても高い。</li>
+</ul>
+
+<h3>交渉時の基本</h3>
+<div class="rule"><strong>「値引きしてください」だけで終わらせない。</strong><br>「同等仕様の市場価格では○○円程度でした。こちらの見積価格との差について、仕入条件・保証・施工条件を含めてご説明いただけますか。仕様を維持したまま価格調整できる余地も確認したいです。」というように、価格差の根拠を確認する。</div>
+
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<ul>
+<li>値引き前の定価と値引率だけを見ない。</li>
+<li>「定価」「市場価格」「見積価格」の3点を見る。</li>
+<li>商品価格だけでなく、施工費・付帯工事・諸経費を含む総額も比較する。</li>
+<li>交渉は「不当利益だ」と決めつけず、「価格設定の根拠」と「調整余地」を確認する。</li>
+</ul>
+
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>実際の仕入価格が不明な場合、「差額を搾取している」と断定しない。</li>
+<li>市場価格との差を「交渉優先度」の材料として扱う。</li>
+<li>市場価格を調査するときは同じ型番・仕様・数量・販売条件を優先する。</li>
+<li>「値引き余地」と「適正価格」を別々に評価する。</li>
+<li>交渉可能性がある場合、具体的な確認質問と再見積条件を提示する。</li>
+</ul>
+</section>
+
+<!-- 9 -->
+<section class="anchor" id="contract">
+<h2>⑨ 契約条件</h2>
+<h3>何を見るか</h3>
+<p>見積価格以外の契約条件が、将来の追加費用・保証・トラブルリスクに影響しないか確認する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>見積有効期限</li>
+<li>追加工事の条件</li>
+<li>契約解除・キャンセル条件</li>
+<li>支払時期・金額</li>
+<li>保証期間・保証範囲</li>
+<li>メーカー保証と施工保証の違い</li>
+<li>工期・遅延時の扱い</li>
+<li>仕様変更時の価格</li>
+</ul>
+<div class="example"><strong>一般例：</strong>見積が安くても「現場状況により追加費用」とだけ書かれている場合、追加費用が発生する条件・単価・上限などを確認する。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<p>契約前に「追加料金が発生する条件」を具体化する。口頭説明だけにしない。</p>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>追加工事条件が曖昧な場合、価格評価を確定しない。</li>
+<li>保証期間だけでなく、誰が何を保証するかを区別する。</li>
+<li>契約書・仕様書・保証書まで確認できる場合は見積書と照合する。</li>
+</ul>
+</section>
+
+<!-- 10 -->
+<section class="anchor" id="longterm">
+<h2>⑩ 長期コスト</h2>
+<h3>何を見るか</h3>
+<p>初期費用だけでなく、修理・点検・交換・メンテナンス・工事手配の手間まで含めて合理性を評価する。</p>
+<h3>見るべきポイント</h3>
+<ul>
+<li>期待される使用期間</li>
+<li>定期点検・清掃</li>
+<li>消耗品</li>
+<li>修理費</li>
+<li>交換周期</li>
+<li>将来の工事価格上昇</li>
+<li>部材供給・修理可能性</li>
+<li>10年・20年・30年程度の総コスト</li>
+<li>工事を手配する回数・手間</li>
+</ul>
+<div class="example"><strong>一般例：</strong>初期費用が安い設備でも、短い周期で交換が必要なら長期総額が高くなる場合がある。逆に初期費用が高くても、メンテナンス頻度が低く長期間使えるなら比較結果が変わる。</div>
+<h3><span class="badge user">ユーザー向け</span>判断材料</h3>
+<p>「今回いくらか」だけでなく、「次にいつ・いくら必要か」「何回業者を手配するか」を考える。</p>
+<h3><span class="badge ai">AI向け</span>判断ルール</h3>
+<ul>
+<li>寿命・交換周期・メンテナンス費は製品・使用条件で異なるため固定値で断定しない。</li>
+<li>必要ならメーカー資料・公的資料・複数の信頼できる情報源を調査する。</li>
+<li>長期比較では仮定を明示し、仮定と確定情報を混同しない。</li>
+</ul>
+</section>
+
+<section class="anchor" id="types">
+<h2>リフォーム種類別：追加チェック項目</h2>
+<h3>外壁塗装</h3>
+<p>塗料メーカー、商品名、グレード、塗布量、下塗り・中塗り・上塗り、ケレン、高圧洗浄、ひび割れ補修、シーリング、付帯部、足場、塗装面積、保証、メンテナンス周期。</p>
+<h3>外壁サイディング／カバー工法</h3>
+<p>既存壁の状態、実壁面積と材料必要量、歩留まり、材料メーカー・商品・厚み、役物、スターター、ジョイナー、出隅、下地・胴縁、不陸調整、施工方法、シーリング、足場、付帯部、保証。</p>
+<h3>屋根塗装・屋根工事</h3>
+<p>屋根材の種類、塗装で済む状態か、カバー・葺き替えが必要か、屋根面積、高圧洗浄、縁切り・タスペーサー等、下塗り・上塗り、棟板金、釘浮き、雨漏り、足場共用、屋根材による塗装可否。</p>
+<h3>太陽光・パワコン</h3>
+<p>メーカー、型番、容量、交換範囲、周辺機器、蓄電池との互換性、既存パネルとの互換性、電気工事、申請、保証、交換時期、故障前交換のメリット・デメリット、売電制度。</p>
+<h3>エコキュート・給湯器</h3>
+<p>タンク容量、メーカー、型番、機能、既存配管流用、リモコン、脚部カバー、撤去処分、標準工事・追加工事、電気工事、補助金、保証、寿命、交換時期、電気料金プランとの整合。</p>
+<h3>キッチン</h3>
+<p>本体価格、値引率、施工費、既存撤去、廃材処分、給排水、電気、ガス、換気、壁・床補修、キッチンパネル、食洗機、水栓、レンジフード、収納、メーカー・シリーズ・グレード。</p>
+<h3>浴室</h3>
+<p>ユニットバス本体、サイズ、断熱、浴槽、床、換気乾燥暖房機、給湯器連携、解体、廃材処分、給排水、電気、土間、断熱、ドア・窓、追加工事。</p>
+<h3>トイレ</h3>
+<p>便器、タンク、便座、手洗い、給排水、床補修、壁紙、換気、コンセント、撤去、処分。本体価格と工事費を分離して比較。</p>
+</section>
+
+<section class="anchor" id="comparison">
+<h2>相見積もり比較の原則</h2>
+<p>相見積もりは「総額」だけでなく、同じ条件に揃えて比較する。</p>
+<table>
+<tr><th>揃えるもの</th><th>確認内容</th></tr>
+<tr><td>商品</td><td>メーカー・型番・グレード</td></tr>
+<tr><td>仕様</td><td>性能・容量・色・厚み等</td></tr>
+<tr><td>数量</td><td>台数・㎡・m・個数</td></tr>
+<tr><td>工事範囲</td><td>撤去・新設・補修・復旧</td></tr>
+<tr><td>作業条件</td><td>昼夜・休日・高所・搬入条件</td></tr>
+<tr><td>付帯費</td><td>足場・養生・処分・運搬等</td></tr>
+<tr><td>保証</td><td>メーカー保証・施工保証</td></tr>
+</table>
+</section>
+
+<section class="anchor" id="web">
+<h2>AIがWeb調査するときのルール</h2>
+<ul>
+<li>最新価格が必要なものは、現在の情報を調査する。</li>
+<li>型番・商品名が分かる場合は、同一商品を優先する。</li>
+<li>メーカー定価と販売価格を混同しない。</li>
+<li>送料・設置費・工事費込み/別を区別する。</li>
+<li>1社の価格だけで市場価格と断定しない。</li>
+<li>メーカー公式情報は仕様・保証の確認に、販売店情報は価格確認に使い分ける。</li>
+<li>相場情報には調査日と条件を付ける。</li>
+<li>Webで根拠が取れない数字は推測で補わない。</li>
+</ul>
+</section>
+
+<section class="anchor" id="questions">
+<h2>AIがユーザーに質問する優先順位</h2>
+<ol>
+<li>結論を大きく左右する不足情報（型番、数量、工事範囲、仕様）</li>
+<li>価格差の原因になり得る条件（昼夜、難易度、既存設備、搬入等）</li>
+<li>必要性・代替案に関する情報</li>
+<li>保証・契約条件</li>
+<li>長期コストに関する情報</li>
+</ol>
+<p class="small">質問を大量に並べず、回答によって次の判断が変わる項目を優先する。</p>
+</section>
+
+<section class="anchor" id="output">
+<h2>AIの最終評価フォーマット</h2>
+<div class="prompt">【総合評価】
+・判定：妥当／交渉推奨／再見積推奨／要確認／強い注意
+・確度：高／中／低
+
+【①～⑩の評価】
+① 必要性：
+② 数量：
+③ 仕様：
+④ 材料価格：
+⑤ 施工価格：
+⑥ 付帯工事：
+⑦ 管理・諸経費：
+⑧ 利益・値引き・交渉余地：
+⑨ 契約条件：
+⑩ 長期コスト：
+
+【価格面での交渉候補】
+・項目：
+・現在価格：
+・比較根拠：
+・合理的な交渉理由：
+・業者への質問：
+
+【仕様変更による削減候補】
+・項目：
+・現在仕様：
+・必要性能：
+・代替案：
+・価格差：
+
+【追加確認が必要な事項】
+・質問1：
+・質問2：
+
+【Web調査した情報】
+・情報：
+・情報源：
+・調査日：
+・条件：
+
+【注意】
+確定情報・Web調査情報・推定/仮定を明確に区別する。</div>
+</section>
+
+<section class="anchor" id="templates">
+<h2>業者への質問テンプレート</h2>
+<div class="example">
+<strong>価格根拠</strong><br>
+「この商品の見積価格について、メーカー定価だけでなく仕入れ条件・保証・搬入等を含めた価格設定の考え方を教えてください。」
+</div>
+<div class="example">
+<strong>仕様根拠</strong><br>
+「この仕様を採用した理由を教えてください。必要性能を満たす標準仕様や別グレードとの比較も可能でしょうか。」
+</div>
+<div class="example">
+<strong>数量根拠</strong><br>
+「この数量の算出根拠を教えてください。実測数量、ロス、予備数量を分けて確認できますか。」
+</div>
+<div class="example">
+<strong>諸経費</strong><br>
+「諸経費に含まれる業務を項目別に教えてください。現場管理費やその他の管理費と重複していないかも確認したいです。」
+</div>
+<div class="example">
+<strong>値引き交渉</strong><br>
+「仕様を維持した場合と、標準的な仕様にした場合の両方で、価格調整できる余地を確認できますか。」
+</div>
+</section>
+
+<section class="anchor" id="workflow">
+<h2>このHTMLを使った実際の評価フロー</h2>
+<ol>
+<li>このHTMLをAIに渡し、Step 1～6を最初に実行させる。</li>
+<li>実際の見積書（PDF、画像、Excel等）を渡す。</li>
+<li>AIが見積内容を構造化する。</li>
+<li>AIが不足情報を抽出する。</li>
+<li>ユーザーと対話して不足情報を埋める。</li>
+<li>AIが必要な項目だけ最新Web情報を調査する。</li>
+<li>価格・仕様・数量・工事・諸経費・契約・長期コストを総合評価する。</li>
+<li>「そのまま契約」「価格交渉」「仕様変更を含む再見積」「相見積もり」「追加確認」のどれが適切かを提示する。</li>
+</ol>
+<div class="notice"><strong>固定相場表をHTMLに持たせない理由：</strong>商品価格・施工費・人件費・地域差・メーカー仕様は変動するため。HTMLは「何を調べ、どう判断するか」を固定し、最新価格そのものはAIがその都度調査する。</div>
+</section>
+
+<section class="anchor" id="failure">
+<h2>失敗防止ルール</h2>
+<ul>
+<li>定価からの値引率だけで業者を評価しない。</li>
+<li>商品単価だけで業者を評価しない。</li>
+<li>総額だけで業者を評価しない。</li>
+<li>諸経費率だけで業者を評価しない。</li>
+<li>相見積もりの条件が違うまま単純比較しない。</li>
+<li>「一式」を勝手に適正価格へ分解しない。</li>
+<li>実際の仕入価格が不明なのに「差額を搾取している」と断定しない。</li>
+<li>最新価格を過去の知識だけで断定しない。</li>
+<li>不明な数値をAIが推測で補完しない。</li>
+<li>価格が安いことだけを目的にして、保証・仕様・施工品質を削らない。</li>
+</ul>
+</section>
+
+<div class="footer">
+このHTMLはリフォーム見積評価の判断フレームワーク。価格データは固定せず、実際の評価時に最新情報を確認する。
+</div>
+
+</div>
+</body>
+</html>
